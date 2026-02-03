@@ -3,50 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    
-	<h1 class="text-primary">Encrypt and Decrypt Dashboard</h1>
-	<link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
-	<script type="text/javascript" src="{{ url_for('static', filename='script/route.js') }}"></script>
+    <title>Vault - Enterprise File Encryption</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-    <div class="row">
-        
-      <div class="column" style="background-color:#aaa;">
-          <h2 class="text-primary">Encrypt</h2>
-          <form action = "/encrypt" method = "post" enctype="multipart/form-data"> 
-            <div class="mb-3">
-                <label for="formFile" class="form-label">Upload Single File Only</label>
-                <input name="file" class="form-control" type="file" id="formFile">
-            </div><br><br>
-            <input type = "submit" class="btn btn-primary" value="Upload"> 
-        </form> 
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <i class="fas fa-lock"></i> <span>Vault</span>
+            </div>
+            <div class="navbar-info">
+                <span class="session-badge" title="{{content}}">
+                    <i class="fas fa-key"></i> <span class="badge-text">Session: <code>{{content}}</code></span>
+                </span>
+            </div>
         </div>
-        
-        
-        <div class="column" style="background-color:#bbb;">
-          <h2 class="text-primary">Decrypt</h2>
-          <form action = "/decrypt" method = "post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="formFile" class="form-label"> Upload Main File </label>
-                <input name="mainfile" class="form-control" type="file" id="formFile">
-              </div><br><br>
-              <div class="mb-3">
-                <label for="formFile" class="form-label"> Upload Key File </label>
-                <input name="keyfile" class="form-control" type="file" id="formFile">
-              </div><br><br>
-            <input type = "submit" class="btn btn-primary" value="Upload"> 
-        </form> 
-        
+    </header>
+
+    <!-- Main Content -->
+    <main class="container center-content">
+        <!-- Encryption/Decryption Forms -->
+        <section class="forms-section">
+            <div class="forms-grid">
+                <!-- Encrypt Panel -->
+                <div class="form-panel encrypt-panel">
+                    <div class="panel-header encrypt-header">
+                        <i class="fas fa-file-lock"></i>
+                        <h2>Encrypt File</h2>
+                    </div>
+                    <form action="/encrypt" method="post" enctype="multipart/form-data" class="form-content">
+                        <div class="form-group">
+                            <label for="encryptFile" class="form-label">
+                                <i class="fas fa-cloud-upload-alt"></i> Select File to Encrypt
+                            </label>
+                            <input 
+                                type="file" 
+                                name="file" 
+                                id="encryptFile" 
+                                class="file-input" 
+                                accept="*/*"
+                                required
+                            >
+                            <p class="file-hint">Max size: 500MB | All file types supported</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-encrypt">
+                            <i class="fas fa-lock"></i> Encrypt & Download
+                        </button>
+                    </form>
+                    <div class="panel-info">
+                        <p><strong>What happens:</strong></p>
+                        <ul>
+                            <li>Generate a 256-bit encryption key</li>
+                            <li>Encrypt your file with AES-256-GCM</li>
+                            <li>Download as .zip with key included</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Decrypt Panel -->
+                <div class="form-panel decrypt-panel">
+                    <div class="panel-header decrypt-header">
+                        <i class="fas fa-file-unlock"></i>
+                        <h2>Decrypt File</h2>
+                    </div>
+                    <form action="/decrypt" method="post" enctype="multipart/form-data" class="form-content">
+                        <div class="form-group">
+                            <label for="decryptFile" class="form-label">
+                                <i class="fas fa-file"></i> Encrypted File
+                            </label>
+                            <input 
+                                type="file" 
+                                name="mainfile" 
+                                id="decryptFile" 
+                                class="file-input"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="keyFile" class="form-label">
+                                <i class="fas fa-key"></i> Key File (.key)
+                            </label>
+                            <input 
+                                type="file" 
+                                name="keyfile" 
+                                id="keyFile" 
+                                class="file-input"
+                                accept=".key"
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-decrypt">
+                            <i class="fas fa-unlock"></i> Decrypt & Download
+                        </button>
+                    </form>
+                    <div class="panel-info">
+                        <p><strong>What happens:</strong></p>
+                        <ul>
+                            <li>Verify authentication tag</li>
+                            <li>Decrypt your file with key</li>
+                            <li>Download original file</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Notice -->
+        <section class="security-notice compact">
+            <div class="notice-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h3>⚠️ Security Notes</h3>
+                    <ul>
+                        <li><strong>Keep Keys Safe:</strong> Without the .key file, your data cannot be recovered</li>
+                        <li><strong>Lost Key = Lost Data:</strong> Backup your encryption keys</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>Vault</strong> - Enterprise File Encryption | Built with AES-256-GCM</p>
+            <p class="footer-tech">Powered by Flask & Cryptography | <span class="session-id">Session: {{content}}</span></p>
         </div>
-    </div>
+    </footer>
 
-
-    <div class="column">
-      <footer> Session ID : {{content}}</footer>
-    </div>
-
-    
+    <script src="{{ url_for('static', filename='script/route.js') }}"></script>
 </body>
 </html>
