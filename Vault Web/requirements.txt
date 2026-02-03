@@ -1,4 +1,0 @@
-flask
-Fernet
-cryptography
-requests
